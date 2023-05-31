@@ -4,6 +4,7 @@
 
 #include <boost/test/included/unit_test.hpp>
 #include "../headers/tape_utils.h"
+#include "../headers/tape_exception.h"
 #include "../src/tape_utils.cpp"
 
 BOOST_AUTO_TEST_SUITE(test_tape_impl)
@@ -50,6 +51,11 @@ BOOST_AUTO_TEST_SUITE(test_sorting_tape)
         auto tape = tape_impl({3, 2, 1}, tape_utils::config_file_name);
         auto res = tape_utils::sort(tape).read_all_tape();
         BOOST_TEST((res == std::vector<int>{1, 2, 3}));
+    }
+
+    BOOST_AUTO_TEST_CASE(expect_throw) {
+        BOOST_CHECK_THROW(tape_impl({3, 2, 1}, "./some_dir/non_existing_file"),
+                          tape_exception);
     }
 
 BOOST_AUTO_TEST_SUITE_END()

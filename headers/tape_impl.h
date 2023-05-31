@@ -2,6 +2,7 @@
 #define YADRO_TAPE_IMPL_H
 
 #include "tape.h"
+#include "tape_exception.h"
 #include <deque>
 #include <utility>
 #include <thread>
@@ -67,7 +68,7 @@ private:
     void read_config() {
         std::ifstream in(config);
         if (!in.is_open()) {
-            throw std::runtime_error("Can't open config file");
+            throw tape_exception("Can't open config file");
         }
         in >> cd.move_delay >> cd.read_delay >> cd.write_delay;
         in.close();

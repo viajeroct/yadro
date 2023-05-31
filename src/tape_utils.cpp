@@ -6,6 +6,9 @@
 namespace tape_utils {
     void write_tape_to_file(tape &t, std::string const &file) {
         std::ofstream out(file);
+        if (!out.is_open()) {
+            throw tape_exception("Can't open input file with tape.");
+        }
         auto res = t.read_all_tape();
         for (auto el: res) {
             out << el << " ";
@@ -16,6 +19,9 @@ namespace tape_utils {
 
     tape_impl read_tape_from_file(std::string const &file) {
         std::ifstream in(file);
+        if (!in.is_open()) {
+            throw tape_exception("Can't open output file to write the tape.");
+        }
         using type = tape::type;
         type x;
         std::vector<type> data;
@@ -115,10 +121,18 @@ namespace tape_utils {
     }
 
     tape_impl sort(tape &t) {
-        auto ttn = split_into_tapes(t, 10);
-        sort_each_tape(ttn);
-        auto res = merge_tapes(ttn);
-        clear_tmp_files(ttn);
-        return {res};
+        std::vector<std::string> ttn;
+        try {
+            ttn = split_into_tapes(t, 10);
+            sort_each_tape(ttn);
+            auto res = merge_tapes(ttn);
+            clear_tmp_files(ttn);
+            return {res};
+        } catch (tape_exception const &e) {
+            using namespace std::string_literals;
+            std::cerr << "Error occurred: "s + e.what() << std::endl;
+            clear_tmp_files(ttn);
+            throw tape_exception(e.what());
+        }
     }
 }
