@@ -22,7 +22,7 @@ public:
 
     explicit tape_impl(std::string file_name) : tape_impl(1, std::move(file_name)) {}
 
-    type read() override {
+    [[nodiscard]] type read() const override {
         delay(cd.read_delay);
         return data[pos];
     }
@@ -32,12 +32,8 @@ public:
         data[pos] = el;
     }
 
-    bool can_move_right() {
-        return pos + 1 >= data.size();
-    }
-
-    bool is_end() {
-        return pos == data.size();
+    bool is_end() override {
+        return pos >= data.size();
     }
 
     void move_left() override {
@@ -47,26 +43,22 @@ public:
     }
 
     void move_right() override {
-        delay(cd.move_delay);
-        if (pos + 1 == data.size()) {
+        if (pos + 1 >= data.size()) {
             data.push_back({});
         }
-        pos++;
+        move_right_without_expand();
     }
 
-    void move_right_sp() {
+    void move_right_without_expand() override {
         delay(cd.move_delay);
         pos++;
     }
 
-    std::vector<type> read_all_tape() {
+    std::vector<type> read_all_tape() override {
         std::vector<int> ans{};
-        while (true) {
+        while (!is_end()) {
             ans.emplace_back(read());
-            if (pos + 1 == data.size()) {
-                break;
-            }
-            move_right();
+            move_right_without_expand();
         }
         return ans;
     }
