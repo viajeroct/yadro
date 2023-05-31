@@ -1,10 +1,10 @@
-#include "tape_utils.h"
+#include "../headers/tape_utils.h"
 #include <string>
 #include <iostream>
 #include <random>
 
 namespace tape_utils {
-    void write_tape_to_file(tape_impl &t, std::string const &file) {
+    void write_tape_to_file(tape &t, std::string const &file) {
         std::ofstream out(file);
         auto res = t.read_all_tape();
         for (auto el: res) {
@@ -26,8 +26,8 @@ namespace tape_utils {
         return tape_impl(data, config_file_name);
     }
 
-    std::vector<std::string> split_into_tapes(tape_impl &t, int tmp_tape_size) {
-        std::string file_pattern = "../tmp/tmp_tape_";
+    std::vector<std::string> split_into_tapes(tape &t, int tmp_tape_size) {
+        std::string file_pattern = tmp_dir + "tmp_tape_";
         int file_number = 0;
         std::vector<std::string> temp_tapes_names;
         while (!t.is_end()) {
@@ -110,11 +110,11 @@ namespace tape_utils {
         while (sz--) {
             tape.move_left();
         }
-        write_tape_to_file(tape, "../input_data/input.txt");
+        write_tape_to_file(tape, data_path + "input.txt");
         return data;
     }
 
-    tape_impl sort(tape_impl &t) {
+    tape_impl sort(tape &t) {
         auto ttn = split_into_tapes(t, 10);
         sort_each_tape(ttn);
         auto res = merge_tapes(ttn);

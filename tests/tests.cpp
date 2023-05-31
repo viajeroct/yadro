@@ -3,8 +3,8 @@
 #define BOOST_TEST_ALTERNATIVE_INIT_API
 
 #include <boost/test/included/unit_test.hpp>
-#include "../tape_utils.h"
-#include "../tape_utils.cpp"
+#include "../headers/tape_utils.h"
+#include "../src/tape_utils.cpp"
 
 BOOST_AUTO_TEST_SUITE(test_tape_impl)
 
@@ -25,8 +25,8 @@ BOOST_AUTO_TEST_SUITE(test_tape_impl)
         ti.move_left();
         ti.move_left();
         ti.move_left();
-        tape_utils::write_tape_to_file(ti, "../tmp/output");
-        auto res = tape_utils::read_tape_from_file("../tmp/output").read_all_tape();
+        tape_utils::write_tape_to_file(ti, tape_utils::tmp_dir + "output.txt");
+        auto res = tape_utils::read_tape_from_file(tape_utils::tmp_dir + "output.txt").read_all_tape();
         BOOST_TEST((res == std::vector<tape::type>{2, 1, 0, 3, 0}));
     }
 
@@ -38,7 +38,7 @@ BOOST_AUTO_TEST_SUITE(test_sorting_tape)
         int tests = 3;
         for (int i = 0; i < tests; i++) {
             auto arr = tape_utils::generate_random_tape();
-            auto tape = tape_utils::read_tape_from_file("../input_data/input.txt");
+            auto tape = tape_utils::read_tape_from_file(tape_utils::data_path + "input.txt");
             auto sorted = tape_utils::sort(tape);
             auto my = sorted.read_all_tape();
             std::sort(arr.begin(), arr.end());
